@@ -105,5 +105,41 @@ def defiler(f_dir='./', f_prefix='out_', f_suffix='txt', out_name='out.txt'):
     return 0
 #defiler()
 
+import numpy as np
+import matplotlib.pyplot as plt
 
-def
+def AR1(n, rho):
+    eps = np.random.normal(size=n)
+    y = np.empty(n)
+    y[0] = 0
+    for i in xrange(1, n-1):
+        y[i] = rho * y[i-1] + eps[i]
+    return y
+y = AR1(1000, .5)
+plt.plot(xrange(1000), y)
+plt.title("Plot of AR(1) Time Series with Rho=0.5")
+plt.show()
+
+Reps = [np.array(AR1(1000,.5)) for i in xrange(200)]
+Reps_matrix = np.asmatrix(Reps).transpose()
+
+Yi_means = Reps_matrix.mean(axis=1).ravel().tolist()[0]
+plt.plot(xrange(1000), Yi_means)
+plt.title("Plot of  mean(Y_i), i=1,...,1000, from an AR(1) with Rho=0.5, 200 reps")
+plt.show()
+
+Yi_vars = Reps_matrix.var(axis=1).ravel().tolist()[0]
+plt.plot(xrange(1000), Yi_vars)
+plt.title("Plot of  var(Y_i), i=1,...,1000, from an AR(1) with Rho=0.5, 200 reps")
+plt.show()
+
+Rep_means = Reps_matrix.mean(axis=0).ravel().tolist()[0]
+plt.plot(xrange(200), Rep_means)
+plt.title("Plot of the grand mean of the whole time series, from an AR(1) with Rho=0.5, 200 reps")
+plt.show()
+
+Rep_vars = Reps_matrix.var(axis=0).ravel().tolist()[0]
+plt.plot(xrange(200), Rep_vars)
+plt.title("Plot of the grand variance of the whole time series from an AR(1) with Rho=0.5, 200 reps")
+plt.show()
+
