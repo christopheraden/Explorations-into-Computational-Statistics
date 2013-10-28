@@ -1,9 +1,10 @@
-library(mvtnorm)
-library(coda)
-library(compiler)
-library(MCMCpack)
+library(mvtnorm) #Generate MV Normals
+library(coda) #MCMC datatype and Eff Samp Size
+library(compiler) #Bytecode Compiler--speeds up for loops
+library(MASS) #For Truehist
+library(xtable) #To display Latex for variable selection
 
-if (Sys.info()['sysname'] %in% c("Linux", "Mac")) {
+if (Sys.info()['sysname'] %in% c("Linux", "Darwin")) {
   setwd("~/Dropbox/sta250/Assignments/HW1/BayesLogit/")
 } else { 
   stop("You're using a different architecture than I am. setwd() so that the code is in the pwd!")
@@ -12,8 +13,8 @@ if (Sys.info()['sysname'] %in% c("Linux", "Mac")) {
 # Read data corresponding to appropriate sim_num:
 cancer = read.table("breast_cancer.txt", sep="", header=TRUE)
 
-#Making the design matrix
-X = model.matrix(diagnosis ~ ., data=cancer)
+
+X = model.matrix(diagnosis ~ ., data=cancer) #Making the design matrix
 p = ncol(X)
 y = as.numeric(cancer$diagnosis)-1 #Benign=0, Malignant=1;
 m = rep(1, length(y))
@@ -48,11 +49,8 @@ for (i in 1:p) { diag_acf_thinned[i] = corrs_thinned$acf[2,i,i] } #Take only the
 
 #Plotting the thinned, final chain.
 plot(chain_thinned, density=FALSE, ask=FALSE)
-jpeg("mcmc_3_1.jpeg", width=1440, height=1781)
-jpeg("mcmc_3_2.jpeg", width=1440, height=1781)
+Posterior_Quantiles = apply(chain_thinned, 2, quantile, probs=c(.025, .975))
+xtable(Posterior_Quantiles, caption="95% Central Credible Interval", align="|cccccccccccc|")
 
-# Extract posterior quantiles...
-
-
-# Write results to a (99 x p) csv file...
-write.csv(posterior.quantiles, file=paste("posterior_quantiles_", sim_num, ".csv", sep=""))
+#Making the Posterior Predictive Check graph.
+PPC.Graphs(Y, X)

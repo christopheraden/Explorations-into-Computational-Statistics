@@ -17,8 +17,6 @@ MH = function(current, candidate, uniform, m, y, sigma.0, beta.0, X){
 	#return the new value. Otherwise, return the old one.
 	r.top = posterior.prob(candidate, y, beta.0, sigma.0, m, X)
 	r.bottom = posterior.prob(current, y, beta.0, sigma.0, m, X)
-# 	print(paste("Candidate:", round(candidate[1],3), sep=" "))
-# 	print(paste("R Top:", r.top, "R Bottom:", r.bottom, sep=" "))
 	r = r.top - r.bottom
 	if (uniform < r) return(list(sample=candidate, accept=TRUE))
 	else return( list(sample=current, accept=FALSE) )
@@ -104,10 +102,47 @@ bayes.logreg.samples = cmpfun(bayes.logreg.samples)
 	# retune: Retune the proposal parameters every return iterations. No tuning should be done after the burnin period is completed
 	# verbose: If TRUE then print lots of debugging output, else be silent
   # thin: integer-- Take every "thin"^th observation from the chain.
-  if all(!is.na(sigma.0.inv)) {sigma.0 = solve(sigma.0.inv)}
+  if (all(!is.na(sigma.0.inv))) {sigma.0 = solve(sigma.0.inv)}
   samples = bayes.logreg.samples(m, y, X, beta.0, sigma.0, niter, burnin, print.every, retune, verbose)
-  Posterior_Draws[seq.int(1, (niter-burnin), by=thin), ]
+  Posterior_Draws = samples[seq.int(1, (niter-burnin), by=thin), ]
   
-  rbind(quantile(Posterior_Draws[,1], probs=seq(0,1,.01)), 
-				quantile(Posterior_Draws[,2], probs=seq(0,1,.01)))
+  cbind(quantile(Posterior_Draws[,1], probs=seq(.01, .99, length=99)), 
+				quantile(Posterior_Draws[,2], probs=seq(.01,.99, length=99)))
 }
+
+PPC.Graphs = function(Y, X, m=1E5, mi=rep(1,length(Y)), posterior=chain_thinned){
+  #Y: Response variable
+  #X: Design matrix (explanatory variables)
+  #m: Number of PPC datasets to generate.
+  #mi: Number of trials for each level of the design matrix.
+  #posterior: MCMC object or matrix (n x p) of posterior draws.
+  
+  n = length(Y)
+  niter = nrow(posterior) #Number of MCMC draws from posterior
+  
+  ppc.datasets <- matrix(nrow=m, ncol=n)
+  rownames(ppc.datasets) <- paste("PPC_",1:m,sep="")
+  
+  index = sample.int(niter, m, replace=TRUE) #Sample the posteriors we want.
+  
+  #Calculate p_i using posterior draw.
+  #Rows: Probability at each X_r; Columns: PP dataset m_i.
+  p.i = sapply(index, function(i) expit(X, posterior[i,])) 
+  
+  PPC_Data = sapply(1:m, function(i) rbinom(n, mi, p.i[,i]))
+  PPC_mean = apply(PPC_Data, 2, mean) #Apply the mean to each PPC Dataset
+  PPC_var = apply(PPC_Data, 2, var) #And the variance
+  
+  true_mean = mean(Y)
+  true_var = var(Y)
+  
+  par(mfrow=c(2,2))
+  truehist(PPC_mean,main="Posterior Predictive Check on Mean", xlab="", ylab="")
+  abline(v=true_mean, col="red")
+  
+  truehist(PPC_var,main="Posterior Predictive Check on Variance", xlab="", ylab="")
+  abline(v=true_var, col="red")
+  
+  NULL
+}
+PPC.Graphs = cmpfun(PPC.Graphs)

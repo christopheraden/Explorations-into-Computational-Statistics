@@ -24,8 +24,8 @@ sim_start <- 1000
 
 ##################################
 coverplot_name <- "coverage_line_plot.pdf"
-resdir <- "results/"
-pardir <- "data/"
+resdir <- "/Users/christopher/Dropbox/STA250/Assignments/HW1/BayesLogit/results/"
+pardir <- "/Users/christopher/Dropbox/STA250/Assignments/HW1/BayesLogit/data/"
 verbose <- TRUE
 ###################################
 

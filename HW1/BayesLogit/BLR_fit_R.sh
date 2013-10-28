@@ -26,10 +26,13 @@
 ##
 ###############################################################################
 
-module load R/3.0.0
+#module load R
 
 # Name of the job - You'll probably want to customize this.
-#SBATCH --job-name=blr_fit_data
+SBATCH --job-name=Problem_2
+SBATCH --mail-type=BEGIN
+SBATCH --mail-user=christopher.b.aden@gmail.com
+
 # Specify range of jobs to run - passed into R as 'args'
 #SARRAY --range=1-200
 
