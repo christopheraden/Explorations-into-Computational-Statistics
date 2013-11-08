@@ -1,7 +1,6 @@
+setwd("~/Dropbox/sta250/Assignments/HW2/Streaming")
 
 # Make 2D Histogram:
-
-#res <- read.table("mini_result.txt",sep=",",header=F)
 res <- read.table("full_results.txt",sep=",",header=F)
 head(res)
 
