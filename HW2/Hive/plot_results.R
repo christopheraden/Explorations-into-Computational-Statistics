@@ -1,0 +1,5 @@
+library(ggplot2)
+aggs <- read.csv("~/Dropbox/sta250/Assignments/HW2/Hive/aggs.csv", header=F)
+pdf("mean_by_var.pdf")
+qplot(aggs$V3, aggs$V2, main ="Group Variances versus Group Means", ylab = "Group Means", xlab = "Group Variances")
+dev.off()

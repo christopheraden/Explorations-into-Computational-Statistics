@@ -2,11 +2,7 @@
 # Read in and process BLB results:
 
 mini <- FALSE
-if (mini){
-	d <- 40
-} else {
-	d <- 1000
-}
+d = ifelse(mini, 40, 1000)
 
 # BLB specs:
 s <- 5 # 50
@@ -14,12 +10,7 @@ r <- 50 # 100
 
 outpath <- "output"
 respath <- "final"
-
-if (mini){
-	rootfilename <- "blb_lin_reg_mini"
-} else {
-	rootfilename <- "blb_lin_reg_data"
-}
+rootfilename = ifelse(mini, "blb_lin_reg_mini", "blb_lin_reg_data")
 
 results.se.filename <- paste0(respath,"/",rootfilename,"_s",s,"_r",r,"_SE.txt")
 results.est.filename <- paste0(respath,"/",rootfilename,"_s",s,"_r",r,"_est.txt")
@@ -63,8 +54,15 @@ print(blb_final_se)
 
 cat("Writing to file...\n")
 write.table(file=results.se.filename,blb_final_se,row.names=F,quote=F)
-#write.table(file=results.est.filename,blb_final_est,row.names=F,quote=F)
+pdf(paste0(respath,"/SD_plot.pdf"))
+if ( require(ggplot2) ) { #If you have ggplot, make a beautiful graph.
+  qplot(1:length(blb_final_se), blb_final_se, main="SE plot of MLEs, i=1, ..., 1000", xlab="Covariate", ylab="Standard Error for Beta_i")
+} else { #Otherwise, make a crappy one.
+  ts.plot(blb_final_se, main="SE plot of MLEs, i=1, ..., 1000", xlab="Covariate", ylab="Standard Error for Beta_i")  
+}
+dev.off()
 cat("done. :)\n")
+quit(save='no')
 
 
 
