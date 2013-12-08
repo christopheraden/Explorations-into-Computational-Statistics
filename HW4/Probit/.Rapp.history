@@ -1,4 +1,0 @@
-load("/Users/aden/Dropbox/STA250/Assignments/HW4/Done/Probit/CPU_probit_times_05.RData")
-CPU
-load("/Users/aden/Dropbox/STA250/Assignments/HW4/Done/Probit/GPU_probit_times_04.RData")
-GPU
