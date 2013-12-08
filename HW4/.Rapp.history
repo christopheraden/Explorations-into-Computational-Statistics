@@ -1,0 +1,3 @@
+load("/Users/aden/Dropbox/STA250/Assignments/HW4/probit_times_01.RData")
+ls()
+foo

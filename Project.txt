@@ -1,0 +1,7 @@
+Project: Do homework, try to implement z_i^(t+1) using Metropolis-Hastings instead of sampling from TruncNorm directly
+
+Sample z_i^(t+1) from TN(x_i^T beta^t, 1; (-infty, 0])
+- Propose zi* from N(zi(t), vi^2)
+- Eval log(alpha) = log(pi(zi*)) - log(pi(zi^t))
+- Accept if log(U) < log(alpha)
+- return zi* or zi^t
