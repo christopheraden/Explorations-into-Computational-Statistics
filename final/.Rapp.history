@@ -1,0 +1,11 @@
+load("/Users/aden/Dropbox/STA250/Assignments/final/Gibbs_times.Rdata")
+load("/Users/aden/Dropbox/STA250/Assignments/Final/MH_times.Rdata")
+ls()
+Gibbs_times
+MH_times
+59380/60^2
+require(xtable)
+install.packages('xtable')
+library(xtable)
+cbind(Gibbs_times, MH_times)
+xtable(cbind(Gibbs_times, MH_times))
